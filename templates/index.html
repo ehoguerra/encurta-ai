@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encurtador de URL</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                <i class="fas fa-link me-2"></i>Encurta ai
+            </a>
+            
+            <div class="navbar-nav ms-auto">
+                {% if current_user and current_user.is_authenticated %}
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>{{ current_user.username }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>Sair
+                            </a></li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <a class="nav-link text-dark me-3" href="{{ url_for('auth.login') }}">
+                        <i class="fas fa-sign-in-alt me-1"></i>Entrar
+                    </a>
+                    <a class="btn btn-outline-custom" href="{{ url_for('auth.register') }}">
+                        <i class="fas fa-user-plus me-1"></i>Registrar
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">
+                <i class="fas fa-magic me-3"></i>Encurtador de URL
+            </h1>
+            <p class="hero-subtitle">
+                Transforme seus links longos em URLs curtas, elegantes e fáceis de compartilhar
+            </p>
+        </div>
+    </div>
+
+    <div class="container my-5">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="row">
+                    <div class="col-12">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}-custom alert-dismissible fade show" role="alert">
+                                <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }} me-2"></i>
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="row">
+            <!-- URL Shortener Form -->
+            <div class="col-lg-8 mx-auto">
+                <div class="card card-custom mb-5">
+                    <div class="card-body p-4">
+                        <h3 class="card-title text-center mb-4">
+                            <i class="fas fa-scissors me-2"></i>Encurtar Nova URL
+                        </h3>
+                        
+                        <form method="POST" action="{{ url_for('main.index') }}" id="shortenForm">
+                            <div class="mb-4">
+                                <label for="url" class="form-label fw-semibold">
+                                    <i class="fas fa-globe me-2"></i>Cole seu link longo aqui:
+                                </label>
+                                <input type="url" 
+                                       class="form-control form-control-custom form-control-lg" 
+                                       id="url" 
+                                       name="url" 
+                                       placeholder="https://exemplo.com/meu-link-muito-longo-que-precisa-ser-encurtado" 
+                                       required>
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Insira uma URL válida começando com http:// ou https://
+                                </div>
+                            </div>
+
+                            {% if current_user and current_user.is_authenticated %}
+                            <!-- User's Links Section -->
+                            <div class="mb-4">
+                                <label for="custom_alias" class="form-label fw-semibold">
+                                    <i class="fas fa-link me-2"></i>Alias Personalizado (opcional):
+                                </label>
+                                <input type="text" 
+                                       class="form-control form-control-custom form-control-lg" 
+                                       id="custom_alias" 
+                                       name="custom_alias" 
+                                       placeholder="exemplo" 
+                                       maxlength="20">
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Insira um alias curto e fácil de lembrar (máx. 20 caracteres)
+                                </div>
+                            </div>
+                            {% endif %}
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary-custom btn-lg">
+                                    <i class="fas fa-magic me-2"></i>
+                                    <span class="btn-text">Encurtar URL</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User's Links Section -->
+        {% if current_user and current_user.is_authenticated %}
+            <div class="row">
+                <div class="col-12">
+                    <!-- User Stats -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="stats-card">
+                                <span class="stats-number">{{ user_links|length }}</span>
+                                <span class="stats-label">Links Criados</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stats-card">
+                                <span class="stats-number">∞</span>
+                                <span class="stats-label">Cliques Totais</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stats-card">
+                                <span class="stats-number">100%</span>
+                                <span class="stats-label">Disponibilidade</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Links List -->
+                    <div class="card card-custom">
+                        <div class="card-header bg-transparent border-0 py-3">
+                            <h4 class="card-title mb-0">
+                                <i class="fas fa-list me-2"></i>Seus Links
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            {% if user_links %}
+                                <div class="row">
+                                    {% for link in user_links %}
+                                        <div class="col-12">
+                                            <div class="link-item-custom">
+                                                <div class="row align-items-center">
+                                                    <div class="col-lg-8">
+                                                        <div class="original-url mb-2">
+                                                            <i class="fas fa-globe me-2"></i>
+                                                            {{ link.original_url }}
+                                                        </div>
+                                                        <div class="short-url">
+                                                            <i class="fas fa-link me-2"></i>
+                                                            {{ request.host_url }}{{ link.short_code }}
+                                                        </div>
+                                                        <small class="text-muted">
+                                                            <i class="far fa-calendar me-1"></i>
+                                                            Criado em {{ link.created_at.strftime('%d/%m/%Y às %H:%M') if link.created_at else 'Data não disponível' }}
+                                                        </small>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+                                                            <button class="btn copy-btn" 
+                                                                    onclick="copyToClipboard('{{ request.host_url }}{{ link.short_code }}', this)">
+                                                                <i class="fas fa-copy me-1"></i>Copiar
+                                                            </button>
+                                                            <a href="{{ url_for('main.redirect_link', link_code=link.short_code) }}" 
+                                                               target="_blank" 
+                                                               class="btn btn-outline-custom">
+                                                                <i class="fas fa-external-link-alt me-1"></i>Testar
+                                                            </a>
+                                                            <button class="btn btn-outline-custom" 
+                                                                    onclick="shareLink('{{ request.host_url }}{{ link.short_code }}')">
+                                                                <i class="fas fa-share-alt me-1"></i>Compartilhar
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="no-links-illustration">
+                                    <i class="fas fa-link-slash"></i>
+                                    <h5 class="mt-3">Nenhum link criado ainda</h5>
+                                    <p>Use o formulário acima para criar seu primeiro link curto!</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <!-- Call to Action for Non-Logged Users -->
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <div class="card card-custom">
+                        <div class="card-body p-5">
+                            <i class="fas fa-user-plus fa-3x mb-3 text-muted"></i>
+                            <h4>Crie uma conta para gerenciar seus links</h4>
+                            <p class="text-muted mb-4">
+                                Com uma conta você pode visualizar, gerenciar e acompanhar todos os seus links encurtados.
+                            </p>
+                            <div class="d-flex gap-3 justify-content-center">
+                                <a href="{{ url_for('auth.register') }}" class="btn btn-primary-custom">
+                                    <i class="fas fa-user-plus me-2"></i>Criar Conta
+                                </a>
+                                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-custom">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Fazer Login
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6><i class="fas fa-link me-2"></i>Encurta ai</h6>
+                    <p class="text-light small">Encurtador de URLs moderno e elegante.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-light small mb-0">
+                        &copy; 2025 Encurta ai. Todos os direitos reservados.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Copy to clipboard functionality
+        function copyToClipboard(text, button) {
+            navigator.clipboard.writeText(text).then(function() {
+                const originalContent = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check me-1"></i>Copiado!';
+                button.classList.add('copied');
+
+                setTimeout(function() {
+                    button.innerHTML = originalContent;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Erro ao copiar: ', err);
+                alert('Erro ao copiar para a área de transferência');
+            });
+        }
+
+        // Share link functionality
+        function shareLink(url) {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Link Encurtado',
+                    text: 'Confira este link encurtado:',
+                    url: url
+                });
+            } else {
+                copyToClipboard(url);
+                alert('Link copiado! Cole onde desejar compartilhar.');
+            }
+        }
+
+        // Form submission enhancement
+        document.getElementById('shortenForm').addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const btnText = submitBtn.querySelector('.btn-text');
+            
+            submitBtn.disabled = true;
+            btnText.innerHTML = '<span class="loading-spinner me-2"></span>Processando...';
+
+            // Re-enable button after 5 seconds as fallback
+            setTimeout(function() {
+                submitBtn.disabled = false;
+                btnText.innerHTML = 'Encurtar URL';
+            }, 5000);
+        });
+
+        // Auto-dismiss alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+</html>

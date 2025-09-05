@@ -1,0 +1,368 @@
+/* Modern URL Shortener with Clean White Design */
+:root {
+    --primary-black: #000000;
+    --secondary-black: #1a1a1a;
+    --light-gray: #f8f9fa;
+    --medium-gray: #6c757d;
+    --dark-gray: #343a40;
+    --border-color: #e9ecef;
+    --shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    --white: #ffffff;
+    --accent-gray: #f1f3f4;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--white);
+    color: var(--primary-black);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* Custom Components */
+.navbar-brand {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--primary-black) !important;
+    text-decoration: none;
+}
+
+.hero-section {
+    background-color: var(--white);
+    color: var(--primary-black);
+    padding: 3rem 0;
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 300;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: var(--primary-black);
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    font-weight: 300;
+    text-align: center;
+    color: var(--medium-gray);
+}
+
+.card-custom {
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: var(--white);
+}
+
+.card-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-primary-custom {
+    background-color: var(--primary-black);
+    border: none;
+    border-radius: 0.75rem;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--white);
+}
+
+.btn-primary-custom:hover {
+    background-color: var(--secondary-black);
+    transform: translateY(-1px);
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
+    color: var(--white);
+}
+
+.btn-outline-custom {
+    border: 1px solid var(--primary-black);
+    color: var(--primary-black);
+    border-radius: 0.75rem;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    background-color: var(--white);
+}
+
+.btn-outline-custom:hover {
+    background-color: var(--primary-black);
+    color: var(--white);
+    transform: translateY(-1px);
+}
+
+.form-control-custom {
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: var(--white);
+}
+
+.form-control-custom:focus {
+    border-color: var(--primary-black);
+    box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+    background-color: var(--white);
+}
+
+.alert-custom {
+    border: none;
+    border-radius: 0.75rem;
+    border-left: 3px solid;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    background-color: var(--white);
+}
+
+.alert-success-custom {
+    background-color: var(--white);
+    border-left-color: #28a745;
+    color: #155724;
+    border: 1px solid #d4edda;
+}
+
+.alert-error-custom {
+    background-color: var(--white);
+    border-left-color: #dc3545;
+    color: #721c24;
+    border: 1px solid #f8d7da;
+}
+
+.link-item-custom {
+    background: var(--white);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.link-item-custom:hover {
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-black);
+}
+
+.short-url {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-black);
+    background-color: var(--accent-gray);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    display: inline-block;
+    margin: 0.5rem 0;
+    border: 1px solid var(--border-color);
+}
+
+.original-url {
+    color: var(--medium-gray);
+    font-size: 0.9rem;
+    word-break: break-all;
+    line-height: 1.4;
+}
+
+.copy-btn {
+    background-color: var(--primary-black);
+    border: none;
+    color: var(--white);
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.copy-btn:hover {
+    background-color: var(--secondary-black);
+    transform: scale(1.05);
+}
+
+.copy-btn.copied {
+    background-color: #28a745 !important;
+}
+
+.user-card {
+    background-color: var(--white);
+    color: var(--primary-black);
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+}
+
+.stats-card {
+    background-color: var(--white);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stats-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-black);
+    display: block;
+}
+
+.stats-label {
+    color: var(--medium-gray);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.no-links-illustration {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--medium-gray);
+}
+
+.no-links-illustration i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .card-custom {
+        margin-bottom: 1.5rem;
+    }
+    
+    .btn-primary-custom {
+        width: 100%;
+        margin-top: 1rem;
+    }
+}
+
+/* Clean white navbar */
+.navbar {
+    background-color: var(--white) !important;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: var(--primary-black) !important;
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+    color: var(--medium-gray) !important;
+}
+
+/* Footer with subtle styling */
+footer {
+    background-color: var(--accent-gray) !important;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Clean form styling */
+.form-label {
+    color: var(--primary-black);
+    font-weight: 500;
+}
+
+.form-text {
+    color: var(--medium-gray);
+}
+
+/* Dropdown menu styling */
+.dropdown-menu {
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+    background-color: var(--white);
+}
+
+.dropdown-item {
+    color: var(--primary-black);
+}
+
+.dropdown-item:hover {
+    background-color: var(--accent-gray);
+    color: var(--primary-black);
+}
+
+/* Clean button focus states */
+.btn:focus, .btn.focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+}
+
+/* Loading Animation */
+.loading-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid transparent;
+    border-top: 2px solid var(--white);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Override Bootstrap defaults for cleaner look */
+.bg-light {
+    background-color: var(--white) !important;
+}
+
+.card {
+    border: 1px solid var(--border-color);
+    background-color: var(--white);
+}
+
+.card-header {
+    background-color: var(--white);
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Clean checkbox styling */
+.form-check-input:checked {
+    background-color: var(--primary-black);
+    border-color: var(--primary-black);
+}
+
+.form-check-input:focus {
+    border-color: var(--primary-black);
+    box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.1);
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
